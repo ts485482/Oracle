@@ -130,3 +130,120 @@ to_char(sysdate,'HH24:MI:SS') as hh24miss,
 to_char(sysdate, 'HH12:MI:SS AM') as hhmiss_am,
 to_char(sysdate, 'HH:MI:SS P.M.') as hhmiss_pm
 from dual;
+
+select to_number('1,300', '999,999')-to_number('1,500','999,999') from dual;
+
+select empno, ename, sal, comm, sal+comm,
+nvl(comm,0),
+sal+nvl(comm,0)
+from emp;
+
+select empno, ename, comm,
+nvl2(comm,'O','X'),
+nvl2(comm,sal*12+comm,sal*12)as annsal
+from emp;
+
+select empno, ename, job, sal,
+case job
+when 'MANAGER' then sal*1.1
+when 'SALESMAN' then sal*1.05
+when 'ANALYST' then sal
+else sal*1.03
+end as upsal
+from emp;
+
+select empno, ename, comm,
+case
+when comm is null then '해당사항 없음'
+when comm = 0 then '수당없음'
+when comm > 0 then concat('수당 : ',comm)
+end as comm_text
+from emp;
+
+select count(*)
+from emp;
+
+select max(sal)
+from emp
+where deptno = 10;
+
+select max(hiredate)
+from emp
+where deptno = 20;
+
+--8교시에 7장 MIN부터 다시 작성
+
+SELECT * FROM EMP;
+SELECT * FROM DEPT;
+
+--실무에서는 join시킨 값을 중복처리되지 않게 해야함
+SELECT *
+FROM EMP E,DEPT D 
+WHERE E.DEPTNO = D.DEPTNO
+ORDER BY EMPNO;
+
+SELECT E.EMPNO, E.ENAME, D.DEPTNO, D.DNAME, D.LOC
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+ORDER BY D.DEPTNO, E.EMPNO;
+
+SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+AND E.SAL>=3000;
+
+SELECT * FROM SALGRADE;
+
+--비등가 조인 BETWEEN A AND B
+SELECT *
+FROM EMP E, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL;
+
+SELECT * FROM EMP;
+
+SELECT E1.EMPNO, E1.ENAME, E1.MGR, 
+E2.EMPNO AS MGR_EMPNO, 
+E2.ENAME AS MGR_ENAME
+FROM EMP E1, EMP E2
+WHERE E1.MGR = E2.EMPNO(+)
+ORDER BY E1.EMPNO;
+
+--NATURAL JOIN : 필드 중복 최소화
+SELECT *
+FROM EMP E NATURAL JOIN DEPT D
+ORDER BY DEPTNO, E.EMPNO;
+
+--JOIN ~ USING : 조인에 사용할 기준열 명시
+
+SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE, E.SAL, E.COMM, DEPTNO, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D USING(DEPTNO)
+WHERE SAL >= 3000
+ORDER BY DEPTNO, E.EMPNO;
+
+--JOIN ~ ON : 조인 조건 직접 명시
+
+SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE, E.SAL, E.COMM, E.DEPTNO, D.DNAME, D.LOC
+FROM emp E JOIN dept D ON (E.DEPTNO = D.DEPTNO)
+WHERE SAL <= 3000
+ORDER BY E.DEPTNO, EMPNO;
+
+--from table1 left outer join table2 on : table1과 table2 조인 후, 남은 table1값 전체 표기(table2 값 : null)
+SELECT E1.EMPNO, E1.ENAME, E1.MGR,
+E2.EMPNO AS MGR_EMPNO,
+E2.ENAME AS MGR_ENAME
+FROM emp E1 left outer join emp E2 on (E1.MGR = E2.EMPNO)
+Order by E1.EMPNO;
+
+--from table1 right outer join table2 on : table1과 table2 조인 후, 남은 table2값 전체 표기(table1 값 : null)
+SELECT E1.EMPNO, E1.ENAME, E1.MGR,
+E2.EMPNO AS MGR_EMPNO,
+E2.ENAME AS MGR_ENAME
+FROM emp E1 right outer join emp E2 on (E1.MGR = E2.EMPNO)
+Order by E1.EMPNO, MGR_EMPNO;
+
+--from table1 full outer join table2 on : table1과 table2 조인 후, 남은 table1값 전체 표기(table2값 : null) 후, 남은 table2값 전체 표기(table1값 : null)
+SELECT E1.EMPNO, E1.ENAME, E1.MGR,
+E2.EMPNO AS MGR_EMPNO,
+E2.ENAME AS MGR_ENAME
+FROM emp E1 full outer join emp E2 on (E1.MGR = E2.EMPNO)
+Order by E1.EMPNO, MGR_EMPNO;
