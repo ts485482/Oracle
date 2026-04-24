@@ -1,4 +1,4 @@
---DDL���ɾ�(CREATE)
+--DDL명령어(CREATE)
 
 CREATE TABLE EMP_HW(
     EMPNO   NUMBER(4),
@@ -11,7 +11,7 @@ CREATE TABLE EMP_HW(
     DEPTNO  NUMBER(2)
 );
 
---���� ���̺� �� ������ �����͸� �����Ͽ� �� ���̺� ����
+--기존 테이블 열 구조와 데이터를 복사하여 새 테이블 생성
 CREATE TABLE DEPT_DDL
 AS SELECT * FROM DEPT;
 
@@ -19,7 +19,7 @@ DESC DEPT_DDL;
 
 SELECT * FROM DEPT_DDL;
 
---���� ���̺� �� ������ �Ϻ� �����͸� �����Ͽ� �� ���̺� ����
+--기존 테이블 열 구조와 일부 데이터만 복사하여 새 테이블 생성
 CREATE TABLE EMP_DDL_30
 AS SELECT*
 FROM EMP
@@ -27,9 +27,9 @@ WHERE DEPTNO=30;
 
 SELECT * FROM EMP_DDL_30;
 
---���� ���̺��� �� ������ �����Ͽ� �� ���̺� ����
---���ǽ��� �׻� FALSE�� WHERE�� ����Ͽ� ���̺�����
---������ �����ϰ�, �����ʹ� ����
+--기존 테이블의 열 구조만 복사하여 새 테이블 생성
+--조건식이 항상 FALSE인 WHERE절 사용하여 테이블생성
+--구조만 복사하고, 데이터는 없음
 CREATE TABLE EMPDEPT_DDL
 AS SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE,
         E.SAL,E.COMM,D.DEPTNO,D.DNAME,D.LOC
@@ -39,8 +39,42 @@ WHERE 1<>1;
 SELECT * FROM EMPDEPT_DDL;
 
 
---ALTER / ADD : ���̺��� �� �߰�
-SELECT * FROM EMP_HW;
+--ALTER / ADD : 테이블에 열 추가
+CREATE TABLE EMP_ALTER
+AS SELECT * FROM EMP;
 
-ALTER TABLE EMP_HW
-ADD BIGO VARCHAR2(20);
+SELECT * FROM EMP_ALTER;
+
+ALTER TABLE EMP_ALTER
+ADD HP VARCHAR2(20);
+
+SELECT * FROM EMP_ALTER;
+
+--ALTER / RENAME A TO B : 테이블의 열 이름 변경( A -> B)
+
+ALTER TABLE EMP_ALTER
+RENAME COLUMN HP TO TEL;
+
+SELECT * FROM EMP_ALTER;
+
+--ALTER / MODIFY : 테이블의 열 자료형을 변경
+
+ALTER TABLE EMP_ALTER
+MODIFY EMPNO NUMBER(5);
+
+DESC EMP_ALTER;
+
+--ALTER / DROP : 테이블의 특정 열을 삭제
+
+ALTER TABLE EMP_ALTER
+DROP COLUMN TEL;
+
+SELECT * FROM EMP_ALTER;
+
+--TRUNCATE : 테이블의 전체 데이터를 삭제
+
+TRUNCATE TABLE EMP_RENAME;
+
+--DROP : 테이블 삭제
+DROP TABLE EMP_RENAME;
+DESC EMP_RENAME;
